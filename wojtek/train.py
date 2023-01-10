@@ -1,6 +1,6 @@
 from sklearn.model_selection import train_test_split
 import numpy as np
-
+import sys
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -36,31 +36,7 @@ def separate_x_and_y(data):
 # x = df.iloc[:, 1:].values
 # y = df.iloc[:, :1].values
 
-df = pd.read_excel('./dane.xlsx')
 
-whole_data = chose_range(df, 0, 13)
-# print(whole_dat)
-
-train70 = chose_range(df, 16, 29)
-train70 = remove_empty(train70)
-
-test30 = chose_range(df, 32, 45)
-test30 = remove_empty(test30)
-
-train10 = chose_range(df, 48, 61)
-train10 = remove_empty(train10)
-
-test90 = chose_range(df, 64, 77)
-test90 = remove_empty(test90)
-
-y_train100, x_train100 = separate_x_and_y(whole_data)
-y_test0, x_test0 = separate_x_and_y(whole_data)
-
-y_train70, x_train70 = separate_x_and_y(train70)
-y_test30, x_test30 = separate_x_and_y(test30)
-
-y_test90, x_test90 = separate_x_and_y(test90)
-y_train10, x_train10 = separate_x_and_y(train10)
 
 
 def decision_tree(x_train, y_train, x_test, y_test):
@@ -99,6 +75,32 @@ def logistic_regression(x_train, y_train, x_test, y_test):
 
 
 def get_scores():
+    df = pd.read_excel('../wojtek_dane.xlsx')
+
+    whole_data = chose_range(df, 0, 13)
+    # print(whole_dat)
+
+    train70 = chose_range(df, 16, 29)
+    train70 = remove_empty(train70)
+
+    test30 = chose_range(df, 32, 45)
+    test30 = remove_empty(test30)
+
+    train10 = chose_range(df, 48, 61)
+    train10 = remove_empty(train10)
+
+    test90 = chose_range(df, 64, 77)
+    test90 = remove_empty(test90)
+
+    y_train100, x_train100 = separate_x_and_y(whole_data)
+    y_test0, x_test0 = separate_x_and_y(whole_data)
+
+    y_train70, x_train70 = separate_x_and_y(train70)
+    y_test30, x_test30 = separate_x_and_y(test30)
+
+    y_test90, x_test90 = separate_x_and_y(test90)
+    y_train10, x_train10 = separate_x_and_y(train10)
+
     dt70_30 = decision_tree(x_train70, y_train70, x_test30, y_test30)
     dt10_90 = decision_tree(x_train10, y_train10, x_test90, y_test90)
     dt100_0 = decision_tree(x_train100, y_train100, x_test0, y_test0)
@@ -138,4 +140,4 @@ def get_scores():
 
 
 scores = get_scores()
-print(scores["100_0"])
+print(scores['70_30'])
