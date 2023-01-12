@@ -22,32 +22,24 @@ def div10_90 (X, y):
 
 
 #regresja logistyczna
-def RL(X_train, X_test, y_train, y_test):
-    log_reg_mck = LogisticRegression()
+def RL(X_train, y_train):
+    log_reg_mck = LogisticRegression(random_state=0)
     log_reg_mck.fit(X_train, y_train)
-    log_reg_score_mck=log_reg_mck.score(X_test,y_test)
-    log_reg_score_on_train_mck=log_reg_mck.score(X_train, y_train)
-    #print("Logistic Regression: ",log_reg_score_mck)
-    return log_reg_score_mck,log_reg_score_on_train_mck
+
+    return log_reg_mck
 
 
  #Stochastic Gradient Descent
-def SGD(X_train, X_test, y_train, y_test):
+def SGD(X_train, y_train):
     sgd_mck = SGDClassifier()
     sgd_mck.fit(X_train, y_train)
-    sgd_mck_score=sgd_mck.score(X_test,y_test)
-    sgd_mck_on_train_score=sgd_mck.score(X_train, y_train)
-    #print("SGD: ",sgd_mck_score)
-    return sgd_mck_score,sgd_mck_on_train_score
+    return sgd_mck
 
 #siec neuronowa
-def NN(X_train, X_test, y_train, y_test):
+def NN(X_train, y_train):
     neuron_network_mck = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(9, 5, 3), random_state=1,max_iter=6000)
     neuron_network_mck.fit(X_train,y_train)
-    neuron_network_score_mck = neuron_network_mck.score(X_test,y_test)
-    neuron_network_on_train_score_mck=neuron_network_mck.score(X_train, y_train)
-    #print("Siec neuronowa: ", neuron_network_score_mck)
-    return neuron_network_score_mck,neuron_network_on_train_score_mck
+    return neuron_network_mck
 
 #AUC ROC CURVE
 def AUC_ROC(X_train, X_test, y_train, y_test):
