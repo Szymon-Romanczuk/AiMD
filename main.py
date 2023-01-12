@@ -3,10 +3,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from methods import *
 from sklearn.ensemble import VotingClassifier
+from losowanie_danych import x_train, y_train, x_test, y_test, x_val, y_val
 
 
-df = pd.read_csv('./dane_do_analizy.csv', sep=';')
-df_val = pd.read_csv('./grupa_werfikacyjna.csv', sep=';')
 
 def make_hybrid_x(methods):
     hybrid_train = np.array([methods[0]])
@@ -95,17 +94,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
         print(score(model,y_test))
     return models
 
-df = pd.read_csv('./Arkusz2.csv', sep=';')
 
-x = df.iloc[:, 1:].values
-y = df.iloc[:, :1].values
-
-x_train, x_test, y_train, y_test = train_test_split(
-    x, y, test_size=0.3, random_state=8
-)
-
-x_val = df_val.iloc[:, 1:].values
-y_val = df_val.iloc[:, :1].values
 
 methods = make_hybrid_model(x_train, x_train, y_train, y_train)
 hybrid_train = make_hybrid_x(methods)
