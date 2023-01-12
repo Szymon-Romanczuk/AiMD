@@ -9,6 +9,7 @@ from sklearn import ensemble
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn import metrics
+from sklearn.metrics import confusion_matrix
 
 df = pd.read_excel(r'nowe_dane_jakub.xlsx')
 #print(df)
@@ -43,6 +44,7 @@ def KNN(X_train, X_test, y_train, y_test, X_val, y_val):
     predictions_knn = knn.predict(X_test)
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_knn)
     auc = metrics.roc_auc_score(y_test, predictions_knn)
+    #print(confusion_matrix(y_test, predictions_knn))
 
     return knn_score, knn_score_on_train, knn_score_on_val, fpr, tpr, auc
 
@@ -57,6 +59,7 @@ def RF(X_train, X_test, y_train, y_test, X_val, y_val):
     predictions_rf = rf.predict(X_test)
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_rf)
     auc = metrics.roc_auc_score(y_test, predictions_rf)
+    #print(confusion_matrix(y_test, predictions_rf))
 
     return rf_score, rf_score_on_train, rf_score_on_val, fpr, tpr, auc
 
@@ -72,6 +75,7 @@ def SVC(X_train, X_test, y_train, y_test, X_val, y_val):
     predictions_svc= svc.predict(X_test)
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_svc)
     auc = metrics.roc_auc_score(y_test, predictions_svc)
+    #print(confusion_matrix(y_test, predictions_svc))
 
     return svc_score, svc_score_on_train, svc_score_on_val, fpr, tpr, auc
 
@@ -87,6 +91,7 @@ def GNB(X_train, X_test, y_train, y_test, X_val, y_val):
     predictions_gnb = gnb.predict(X_test)
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_gnb)
     auc = metrics.roc_auc_score(y_test, predictions_gnb)
+    print(confusion_matrix(y_test, predictions_gnb))
 
     return gnb_score, gnb_score_on_train, gnb_score_on_val, fpr, tpr, auc
 
