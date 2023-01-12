@@ -11,7 +11,7 @@ from sklearn.neighbors import RadiusNeighborsClassifier
 
 
 def parse_data():
-    data = pd.read_excel(r'Z02A.xlsx', 'Szymon', skiprows=4)
+    data = pd.read_excel(r'szymon/Z02A.xlsx', 'Szymon', skiprows=4)
     data_frame = pd.DataFrame(data)
     return data_frame
 
