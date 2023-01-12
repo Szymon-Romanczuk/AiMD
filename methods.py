@@ -9,6 +9,7 @@ from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.svm import SVR
+from sklearn.linear_model import SGDClassifier
 
 
 def decision_tree(x_train, y_train):
@@ -80,3 +81,9 @@ def svr(x_train, y_train):
 	svr.fit(x_train, y_train)
 
 	return svr
+
+def SGD(x_train, y_train):
+	sgd_mck = SGDClassifier()
+	sgd_mck.fit(x_train, y_train)
+
+	return sgd_mck
