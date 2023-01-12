@@ -140,4 +140,4 @@ def get_scores():
 
 
 scores = get_scores()
-print(scores['70_30'])
+print(scores)

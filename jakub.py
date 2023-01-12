@@ -108,10 +108,10 @@ def JG_wywołaj(df):
     svc_score_10_90, svc_score_on_train_10_90 = SVC(X10_train, X90_test, y10_train, y90_test)
     gnb_score_10_90, gnb_score_on_train_10_90 = GNB(X10_train, X90_test, y10_train, y90_test)
 
-    Print_scores(knn_score_70_30, knn_score_on_train_70_30, rf_score_70_30, rf_score_on_train_70_30, svc_score_70_30,
-                 svc_score_on_train_70_30, gnb_score_70_30, gnb_score_on_train_70_30, knn_score_10_90,
-                 knn_score_on_train_10_90, rf_score_10_90, rf_score_on_train_10_90, svc_score_10_90,
-                 svc_score_on_train_10_90, gnb_score_10_90, gnb_score_on_train_10_90)
+    #Print_scores(knn_score_70_30, knn_score_on_train_70_30, rf_score_70_30, rf_score_on_train_70_30, svc_score_70_30,
+    #             svc_score_on_train_70_30, gnb_score_70_30, gnb_score_on_train_70_30, knn_score_10_90,
+    #             knn_score_on_train_10_90, rf_score_10_90, rf_score_on_train_10_90, svc_score_10_90,
+    #             svc_score_on_train_10_90, gnb_score_10_90, gnb_score_on_train_10_90)
 
     return {
         "70_30": {
@@ -140,4 +140,4 @@ def JG_wywołaj(df):
         }
     }
 
-JG_wywołaj(df)
+print(JG_wywołaj(df))
