@@ -11,7 +11,7 @@ from sklearn.neighbors import RadiusNeighborsClassifier
 
 
 def parse_data():
-    data = pd.read_excel(r'Z02A.xlsx', 'Szymon', skiprows=4)
+    data = pd.read_excel(r'szymon/Z02A.xlsx', 'Szymon', skiprows=4)
     data_frame = pd.DataFrame(data)
     return data_frame
 
@@ -40,7 +40,7 @@ def data10_90(data):
 
 def chose_range(data, a, b):
     chosed = data.drop(data.iloc[:, 0: a], axis=1)
-    chosed = chosed.drop(data.iloc[:, (b+1): 84], axis=1)
+    chosed = chosed.drop(data.iloc[:, (b + 1): 84], axis=1)
     return chosed
 
 
@@ -64,7 +64,7 @@ def natural_network(study):
     X_study, Y_study = sapareteXY(study)
 
     clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(9, 5, 3), random_state=1, max_iter=6000)
-    #9,5,3
+    # 9,5,3
     clf.fit(X_study, Y_study)
     return clf
 
@@ -96,47 +96,32 @@ def sapareteXY(data):
     return X, Y
 
 
-def hybrid_model(study):
-    X_study, Y_study = sapareteXY(study)
-    #clf1 = linear_discriminant_analysis(study)
-    clf2 = natural_network(study)
-    clf3 = gradient_boosting(study)
-    #clf4 = radius_neighbors(study)
-
-    eclf1 = VotingClassifier(estimators=[
-        #('lda', clf1),
-        ('nn', clf2),
-        ('gb', clf3),
-        #('rn', clf4),
-        ], voting='soft')
-    eclf1 = eclf1.fit(X_study, Y_study)
-    return eclf1
-
-
 def analize(study, test):
-    clf = linear_discriminant_analysis(study)
-    print("Analiza dyskryminacjyjna:", test_model(clf, test))
-    clf = natural_network(study)
-    print("Sieć Neuronowa:", test_model(clf, test))
-    clf = gradient_boosting(study)
-    print("Gradient Boosting:", test_model(clf, test))
-    clf = radius_neighbors(study)
-    print("Radius Neighbors:", test_model(clf, test))
-    clf = hybrid_model(study)
-    print("Hybrid Model:", test_model(clf, test))
-    print()
+    lda = linear_discriminant_analysis(study)
+    nn = natural_network(study)
+    gb = gradient_boosting(study)
+    rn = radius_neighbors(study)
+
+    return {
+        'Analiza dyskryminacyjna': test_model(lda, test),
+        'Sieć Neuronowa': test_model(nn, test),
+        'Gradient Boosting': test_model(gb, test),
+        'Radius Neighbors': test_model(rn, test),
+    }
 
 
-data = parse_data()
+def SR():
+    data = parse_data()
+    study70, test30 = data70_30(data)
+    study10, test90 = data10_90(data)
+    #print(analize(study70, test30))
 
-print("Całość")
-all_data = all_data(data)
-analize(all_data, all_data)
+    return {
+        "70_30": analize(study70, test30),
+        "10_90": analize(study10, test90),
+        "70_30_on_train": analize(study70, study70),
+        "10_90_on_train": analize(study10, study10),
+    }
 
-print("70/30")
-study, test = data70_30(data)
-analize(study, test)
 
-print("10/90")
-study, test = data10_90(data)
-analize(study, test)
+print(SR())

@@ -75,7 +75,7 @@ def logistic_regression(x_train, y_train, x_test, y_test):
 
 
 def get_scores():
-    df = pd.read_excel('../wojtek_dane.xlsx')
+    df = pd.read_excel('wojtek_dane.xlsx')
 
     whole_data = chose_range(df, 0, 13)
     # print(whole_dat)
@@ -140,4 +140,4 @@ def get_scores():
 
 
 scores = get_scores()
-print(scores['70_30'])
+print(scores)
