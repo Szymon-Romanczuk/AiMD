@@ -1,9 +1,11 @@
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from methods import *
 from sklearn.ensemble import VotingClassifier
 
-df = pd.read_csv('./Arkusz2.csv', sep=';')
+df = pd.read_csv('./dane_do_analizy.csv', sep=';')
+df_val = pd.read_csv('./grupa_werfikacyjna.csv', sep=';')
 
 x = df.iloc[:, 1:].values
 y = df.iloc[:, :1].values
@@ -12,7 +14,8 @@ x_train, x_test, y_train, y_test = train_test_split(
     x, y, test_size=0.3, random_state=8
 )
 
-x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.25, random_state=8)
+x_val = df_val.iloc[:, 1:].values
+y_val = df_val.iloc[:, :1].values
 
 
 wojtek_train = x_train[:, [33, 62, 10, 21, 49, 15, 18, 6, 48, 51, 24, 12, 19]]
