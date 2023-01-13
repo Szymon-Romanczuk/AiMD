@@ -91,7 +91,7 @@ def GNB(X_train, X_test, y_train, y_test, X_val, y_val):
     predictions_gnb = gnb.predict(X_test)
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_gnb)
     auc = metrics.roc_auc_score(y_test, predictions_gnb)
-    print(confusion_matrix(y_test, predictions_gnb))
+    #print(confusion_matrix(y_test, predictions_gnb))
 
     return gnb_score, gnb_score_on_train, gnb_score_on_val, fpr, tpr, auc
 
@@ -102,6 +102,18 @@ def Wykres(fpr1, tpr1, auc1, fpr2, tpr2, auc2, method):
     plt.plot(fpr2, tpr2, label="10 90 AUC=" + str(auc2))
     # plt.plot(fpr2, tpr2, label="100 0")
     plt.title(method)
+    plt.ylabel('True Positive Rage')
+    plt.xlabel('False Positive Rate')
+    plt.legend(loc=4)
+    plt.show()
+
+def Wykres_4_na_1(fpr1, tpr1, auc1, fpr2, tpr2, auc2, fpr3, tpr3, auc3, fpr4, tpr4, auc4, title):
+    plt.plot(fpr1, tpr1, label="KNN AUC=" + str(auc1))
+    plt.plot(fpr2, tpr2, label="RF AUC=" + str(auc2))
+    plt.plot(fpr3, tpr3, label="SVC AUC=" + str(auc3))
+    plt.plot(fpr4, tpr4, label="GNB AUC=" + str(auc4))
+    # plt.plot(fpr2, tpr2, label="100 0")
+    plt.title(title)
     plt.ylabel('True Positive Rage')
     plt.xlabel('False Positive Rate')
     plt.legend(loc=4)
@@ -173,6 +185,11 @@ def JG_wywołaj(df):
     Wykres(fpr_rf_70_30, tpr_rf_70_30,auc_rf_70_30,fpr_rf_10_90, tpr_rf_10_90, auc_rf_10_90, "Random Forest")
     Wykres(fpr_svc_70_30,tpr_svc_70_30, auc_svc_70_30, fpr_svc_10_90, tpr_svc_10_90, auc_svc_10_90, "Support Vector Classification")
     Wykres(fpr_gnb_70_30, tpr_gnb_70_30, auc_gnb_70_30, fpr_gnb_10_90, tpr_gnb_10_90, auc_gnb_10_90, "Naive Bayes")
+
+    Wykres_4_na_1(fpr_knn_70_30, tpr_knn_70_30, auc_knn_70_30, fpr_rf_70_30, tpr_rf_70_30, auc_rf_70_30, fpr_svc_70_30,
+                  tpr_svc_70_30, auc_svc_70_30, fpr_gnb_70_30, tpr_gnb_70_30, auc_gnb_70_30, "70_30")
+    Wykres_4_na_1(fpr_knn_10_90, tpr_knn_10_90, auc_knn_10_90, fpr_rf_10_90, tpr_rf_10_90, auc_rf_10_90, fpr_svc_10_90,
+                  tpr_svc_10_90, auc_svc_10_90, fpr_gnb_10_90, tpr_gnb_10_90, auc_gnb_10_90, "10_90")
 
     return {
         "70_30": {
