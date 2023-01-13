@@ -9,50 +9,8 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import VotingClassifier, GradientBoostingClassifier
 from sklearn.neighbors import RadiusNeighborsClassifier
-from losowanie_danych import x_train, x_test, y_train, y_test, x_val, y_val
+from losowanie_danych import r10_90, r70_30
 from methods import Wykres
-
-
-def parse_data():
-    data = pd.read_excel(r'szymon/Z02A.xlsx', 'Szymon', skiprows=4)
-    data_frame = pd.DataFrame(data)
-    return data_frame
-
-
-def all_data(data):
-    return chose_range(data, 0, 13)
-
-
-def data70_30(data):
-    study = chose_range(data, 17, 30)
-    study = remove_empty(study)
-    test = chose_range(data, 34, 47)
-    test = remove_empty(test)
-
-    return study, test
-
-
-def data10_90(data):
-    study = chose_range(data, 51, 64)
-    study = remove_empty(study)
-    test = chose_range(data, 68, 81)
-    test = remove_empty(test)
-
-    return study, test
-
-
-def chose_range(data, a, b):
-    chosed = data.drop(data.iloc[:, 0: a], axis=1)
-    chosed = chosed.drop(data.iloc[:, (b + 1): 84], axis=1)
-    return chosed
-
-
-def remove_empty(data):
-    for row in range(0, len(data.index)):
-        if data.iloc[row][0] != data.iloc[row][0]:
-            rows = np.arange((row), len(data.index))
-            data = data.drop(rows, axis=0)
-            return data
 
 
 def linear_discriminant_analysis(study):
@@ -105,18 +63,18 @@ def sapareteXY(data):
     return X, Y
 
 
-def analize(study, test):
+def analize(study, test, name):
     lda = linear_discriminant_analysis(study)
     nn = natural_network(study)
     gb = gradient_boosting(study)
     rn = radius_neighbors(study)
 
-    plot(lda, test, 'Analiza dyskrymiancyja')
-    plot(nn, test, 'Sieć Neuronowa')
-    plot(gb, test, 'Gradient Boosting')
-    plot(rn, test, 'Radius Neighbors')
-    plt.show()
-    plt.clf()
+    #plot(lda, test, name)
+    #plot(nn, test, name)
+    #plot(gb, test, name)
+    plot(rn, test, name)
+    #plt.show()
+    #plt.clf()
     return {
         'Analiza dyskryminacyjna': test_model(lda, test),
         'Sieć Neuronowa': test_model(nn, test),
@@ -135,17 +93,15 @@ def make_data(x_train, x_test, x_val, y_train, y_test, y_val):
     return szymon_train, szymon_test, szymon_val
 
 
+x_train, x_test, x_val, y_train, y_test, y_val = r10_90()
 train, test, val = (make_data(x_train, x_test, x_val, y_train, y_test, y_val))
-#print('train', 'train')
-
-#print(analize(train, train))
 
 print('train', 'test')
-plt.title('Testowa')
-print(analize(train, test))
+plt.title('Radius Neighbors')
+print(analize(train, test, '10 90 AUC = '))
 
-print('train', 'val')
-plt.title('Walidacyjna')
-print(analize(train, val))
+x_train, x_test, x_val, y_train, y_test, y_val = r70_30()
+train, test, val = (make_data(x_train, x_test, x_val, y_train, y_test, y_val))
 
-
+print(analize(train, test, '70 30 AUC = '))
+plt.show()

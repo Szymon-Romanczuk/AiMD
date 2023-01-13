@@ -9,9 +9,11 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVR
 from sklearn import metrics
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 
-df = pd.read_excel(r'Dane2.xlsx')
+df = pd.read_excel(r'Bartek_dane.xlsx')
 
 #podział danych na grupę testową i trenującą
 def div70_30 (X, y):
@@ -34,7 +36,7 @@ def KNN(X_train, X_test, y_train, y_test, X_val, y_val):
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_knn)
     auc = metrics.roc_auc_score(y_test, predictions_knn)
     
-    print(confusion_matrix(y_test, predictions_knn))
+    #print("KNN", confusion_matrix(y_test, predictions_knn))
 
     return knn_score, knn_score_on_train, knn_score_on_val, fpr, tpr, auc
 
@@ -52,7 +54,7 @@ def SVC(X_train, X_test, y_train, y_test, X_val, y_val):
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_svc)
     auc = metrics.roc_auc_score(y_test, predictions_svc)
 
-    print(confusion_matrix(y_test, predictions_svc))
+    #print("SVC",confusion_matrix(y_test, predictions_svc))
     return svc_score, svc_score_on_train, svc_score_on_val, fpr, tpr, auc
 
 #drzewo decyzyjne
@@ -66,25 +68,25 @@ def DecisionTree(X_train, X_test, y_train, y_test, X_val, y_val):
     fpr, tpr, _ = metrics.roc_curve(y_test, prediction_decision_tree)
     auc = metrics.roc_auc_score(y_test, prediction_decision_tree)
     
-    print(confusion_matrix(y_test, predictions_decision_tree))
+    #print("DT",confusion_matrix(y_test, prediction_decision_tree))
 
     return decision_tree_score, decision_tree_score_on_train, decision_tree_score_on_val, fpr, tpr, auc
 
 
 
-#LinearSVR
-def SVR(X_train, X_test, y_train, y_test, X_val, y_val):
-    svr =SVR(C=1.0, epsilon=0.2)
-    svr.fit(X_train,y_train)
-    svr_score = svr.score(X_test, y_test)
-    svr_score_on_train = svr.score(X_train, y_train)
-    svr_score_on_val = svr.score(X_val, y_val)
-    predictions_svr = svr.predict(X_test)
-    fpr, tpr, _ = metrics.roc_curve(y_test, predictions_svr)
-    auc = metrics.roc_auc_score(y_test, predictions_svr)
+#Linear Discriminant Analysis
+def LDA(X_train, X_test, y_train, y_test, X_val, y_val):
+    clf = LinearDiscriminantAnalysis()
+    clf.fit(X_train,y_train)
+    clf_score = clf.score(X_test, y_test)
+    clf_score_on_train = clf.score(X_train, y_train)
+    clf_score_on_val = clf.score(X_val, y_val)
+    predictions_clf = clf.predict(X_test)
+    fpr, tpr, _ = metrics.roc_curve(y_test, predictions_clf)
+    auc = metrics.roc_auc_score(y_test, predictions_clf)
     
-    print(confusion_matrix(y_test, predictions_svr))
-    return svr_score, svr_score_on_train, svr_score_on_val, fpr, tpr, auc
+   # print("LDA", confusion_matrix(y_test, predictions_clf))
+    return clf_score, clf_score_on_train, clf_score_on_val, fpr, tpr, auc
 
 def Wykres(fpr1, tpr1, auc1, fpr2, tpr2, auc2, method):
     plt.plot(fpr1, tpr1, label="70 30 AUC=" + str(auc1))
@@ -106,24 +108,24 @@ def Print_scores(knn_score_70_30, knn_score_on_train_70_30, decision_tree_score_
                  svc_score_on_val_10_90, decision_tree_score_on_val_10_90):
 
     print("70_30:\nk_nearest_neighbors: ", knn_score_70_30,"\ndecision_tree: ", decision_tree_score_70_30, "\nsupport_vector_classification: ",
-          svc_score_70_30, "\nSVR: ", svr_score_70_30,)
+          svc_score_70_30, "\nLinear Discriminant Analysis: ", svr_score_70_30,)
     print("\n\n10_90:\nk_nearest_neighbors: ", knn_score_10_90,"\ndecision_tree: ", decision_tree_score_10_90, "\nsupport_vector_classification: ",
-          svc_score_10_90, "\nSVR: ", svr_score_10_90,)
+          svc_score_10_90, "\nLinear Discriminant Analysis: ", svr_score_10_90,)
     print("\n\n70_30_on_train:\nk_nearest_neighbors: ", knn_score_on_train_70_30, "\ndecision_tree: ", decision_tree_score_on_train_70_30,
-          "\nsupport_vector_classification: ", svc_score_on_train_70_30, "\nSVR: ", svr_score_on_train_70_30, )
+          "\nsupport_vector_classification: ", svc_score_on_train_70_30, "\nLinear Discriminant Analysis: ", svr_score_on_train_70_30, )
     print("\n\n10_90_on_train:\nk_nearest_neighbors: ", knn_score_on_train_10_90, "\ndecision_tree: ", decision_tree_score_on_train_10_90,
-          "\nsupport_vector_classification: ",svc_score_on_train_10_90, "\nSVR: ", svr_score_on_train_10_90, )
+          "\nsupport_vector_classification: ",svc_score_on_train_10_90, "\nLinear Discriminant Analysis: ", svr_score_on_train_10_90, )
     print("\n\n70_30_on_val:\nk_nearest_neighbors: ", knn_score_on_val_70_30, "\ndecision_tree: ",
-         decision_tree_score_on_val_70_30, "\nsupport_vector_classification: ", svc_score_on_val_70_30, "\nSVR: ", svr_score_on_val_70_30, )
+         decision_tree_score_on_val_70_30, "\nsupport_vector_classification: ", svc_score_on_val_70_30, "\nLinear Discriminant Analysis: ", svr_score_on_val_70_30, )
     print("\n\n10_90_on_val:\nk_nearest_neighbors: ", knn_score_on_val_10_90, "\ndecision_tree: ",
-          decision_tree_score_on_val_10_90, "\nsupport_vector_classification: ", svc_score_on_val_10_90, "\nSVR: ", svr_score_on_val_10_90, )
+          decision_tree_score_on_val_10_90, "\nsupport_vector_classification: ", svc_score_on_val_10_90, "\nLinear Discriminant Analysis: ", svr_score_on_val_10_90, )
 
 def BG_wywołaj(df):
     X = df.values
     y = df['Y'].values
     X = np.delete(X, 0, axis=1)
 
-    df_val = pd.read_excel(r'Dane2.xlsx')#
+    df_val = pd.read_excel(r'Dane_do_walidacji_Bartek.xlsx')
     X_val = df_val.values#
     y_val = df_val['Y'].values#
     X_val = np.delete(X_val, 0, axis=1)#
@@ -137,7 +139,7 @@ def BG_wywołaj(df):
     svc_score_70_30, svc_score_on_train_70_30, svc_score_on_val_70_30, fpr_svc_70_30, tpr_svc_70_30, auc_svc_70_30 =\
         SVC(X70_train, X30_test, y70_train, y30_test, X_val, y_val)
     svr_score_70_30, svr_score_on_train_70_30, svr_score_on_val_70_30, fpr_svr_70_30, tpr_svr_70_30, auc_svr_70_30 =\
-        SVR(X70_train, X30_test, y70_train, y30_test, X_val, y_val)
+        LDA(X70_train, X30_test, y70_train, y30_test, X_val, y_val)
 
     X10_train, X90_test, y10_train, y90_test = div10_90(X, y)
     knn_score_10_90, knn_score_on_train_10_90, knn_score_on_val_10_90, fpr_knn_10_90, tpr_knn_10_90, auc_knn_10_90\
@@ -147,7 +149,7 @@ def BG_wywołaj(df):
     svc_score_10_90, svc_score_on_train_10_90, svc_score_on_val_10_90, fpr_svc_10_90, tpr_svc_10_90, auc_svc_10_90 =\
         SVC(X10_train, X90_test, y10_train, y90_test, X_val, y_val)
     svr_score_10_90, svr_score_on_train_10_90, svr_score_on_val_10_90, fpr_svr_10_90, tpr_svr_10_90, auc_svr_10_90 =\
-        SVR(X10_train, X90_test, y10_train, y90_test, X_val, y_val)
+        LDA(X10_train, X90_test, y10_train, y90_test, X_val, y_val)
 
 
     Print_scores(knn_score_70_30, knn_score_on_train_70_30, decision_tree_score_70_30, decision_tree_score_on_train_70_30, svc_score_70_30,
@@ -161,20 +163,20 @@ def BG_wywołaj(df):
     Wykres(fpr_knn_70_30,tpr_knn_70_30, auc_knn_70_30, fpr_knn_10_90, tpr_knn_10_90, auc_knn_10_90, "K Nearest Neighbors")
     Wykres(fpr_decision_tree_70_30, tpr_decision_tree_70_30,auc_decision_tree_70_30,fpr_decision_tree_10_90, tpr_decision_tree_10_90, auc_decision_tree_10_90, "Decision tree")
     Wykres(fpr_svc_70_30,tpr_svc_70_30, auc_svc_70_30, fpr_svc_10_90, tpr_svc_10_90, auc_svc_10_90, "Support Vector Classification")
-    Wykres(fpr_svr_70_30, tpr_svr_70_30, auc_svr_70_30, fpr_svr_10_90, tpr_svr_10_90, auc_svr_10_90, "SVR")
+    Wykres(fpr_svr_70_30, tpr_svr_70_30, auc_svr_70_30, fpr_svr_10_90, tpr_svr_10_90, auc_svr_10_90, "Linear Discriminant Analysis")
 
     return {
         "70_30": {
             'k nearest neighbors': knn_score_70_30,
             'decision_tree': decision_tree_score_70_30,
             'support vector classification': svc_score_70_30,
-            'svr': svr_score_70_30,
+            'Linear Discriminant Analysis': svr_score_70_30,
         },
         "10_90": {
             'k nearest neighbors': knn_score_10_90,
             'decision_tree': decision_tree_score_10_90,
             'support vector classification': svc_score_10_90,
-            'svr': svr_score_10_90,
+            'Linear Discriminant Analysis': svr_score_10_90,
         },
         "70_30_on_train": {
             'k nearest neighbors': knn_score_on_train_70_30,
@@ -186,19 +188,19 @@ def BG_wywołaj(df):
             'k nearest neighbors': knn_score_on_train_10_90,
             'rdecision_tree': decision_tree_score_on_train_10_90,
             'support vector classification': svc_score_on_train_10_90,
-            'svr': svr_score_on_train_10_90,
+            'Linear Discriminant Analysis': svr_score_on_train_10_90,
         },
         "70_30_on_val": {
             'k nearest neighbors': knn_score_on_val_70_30,
             'decision_tree': decision_tree_score_on_val_70_30,
             'support vector classification': svc_score_on_val_70_30,
-            'svr': svr_score_on_val_70_30,
+            'Linear Discriminant Analysis': svr_score_on_val_70_30,
         },
         "10_90_on_val": {
             'k nearest neighbors': knn_score_on_val_10_90,
             'decision_tree': decision_tree_score_on_val_10_90,
             'support vector classification': svc_score_on_val_10_90,
-            'svr': svr_score_on_val_10_90,
+            'Linear Discriminant Analysis': svr_score_on_val_10_90,
         }
     }
 
