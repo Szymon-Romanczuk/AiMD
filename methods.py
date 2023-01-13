@@ -117,6 +117,7 @@ def score(y_predict, y):
 def ROC(y_predict, y):
     fpr, tpr, _ = metrics.roc_curve(y, y_predict)
     auc = metrics.roc_auc_score(y, y_predict)
+    print(confusion_matrix(y, y_predict))
     return fpr, tpr, auc
 
 

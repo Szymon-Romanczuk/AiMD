@@ -104,11 +104,14 @@ def hybrid(x_train, x_test, y_train, y_test):
 
 
 #print(hybrid(x_train, x_train, y_train, y_train))
-plt.title('Testowa')
+plt.title('Ucząca 70 30')
+print(hybrid(x_train, x_train, y_train, y_train))
+plt.show()
+plt.title('Testowa 70 30')
 print(hybrid(x_train, x_test, y_train, y_test))
 plt.show()
 #plt.clf()
-plt.title('Walidacyjna')
+plt.title('Walidacyjna 70 30')
 print(hybrid(x_train, x_val, y_train, y_val))
 plt.show()
 
