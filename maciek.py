@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import openpyxl
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import SGDClassifier
@@ -8,6 +9,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import roc_curve
 from sklearn import metrics
 import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
 
 data_mck=pd.read_excel(r'maciek_excel.xlsx')
 
@@ -82,6 +84,17 @@ def Wykres(fpr1, tpr1, auc1, fpr2, tpr2, auc2, method):
     plt.legend(loc=4)
     plt.show()
 
+def Wykres_4_na_1(fpr1, tpr1, auc1, fpr2, tpr2, auc2, fpr3, tpr3, auc3, fpr4, tpr4, auc4, title):
+    plt.plot(fpr1, tpr1, label="KNN AUC=" + str(auc1))
+    plt.plot(fpr2, tpr2, label="RF AUC=" + str(auc2))
+    plt.plot(fpr3, tpr3, label="SVC AUC=" + str(auc3))
+    plt.plot(fpr4, tpr4, label="GNB AUC=" + str(auc4))
+    # plt.plot(fpr2, tpr2, label="100 0")
+    plt.title(title)
+    plt.ylabel('True Positive Rage')
+    plt.xlabel('False Positive Rate')
+    plt.legend(loc=4)
+    plt.show()
 
 
 def print_scores_maciek(logistic_regression_score_70_30, logistic_regression_score_on_train_70_30, Stochastic_Gradient_Descent_score_70_30, Stochastic_Gradient_score_on_train_70_30, neuron_network_score_70_30,
@@ -100,8 +113,8 @@ def print_scores_maciek(logistic_regression_score_70_30, logistic_regression_sco
           "\nNeuron network: ", neuron_network_score_on_train_70_30, "\nGradient Boosting", gradient_boosting_score_on_train_70_30, )
     print("\n\n10_90_on_train:\nLogistic Regression: ", logistic_regression_score_on_train_10_90, "\nSGD: ", Stochastic_Gradient_Descent_score_on_train_10_90,
           "\nNeuron network: ",neuron_network_score_on_train_10_90, "\nGradient Boosting ", gradient_boosting_score_on_train_10_90, )
-    print("\n\n70_30_on_val:\nLogistic Regression: ", logistic_regression_score_on_val_70_30, "\nSGD: ", gradient_boosting_score_on_val_70_30,
-          "\nNeuron network: ", neuron_network_score_on_val_70_30, "\nGradient Boosting", neuron_network_score_on_val_70_30, )
+    print("\n\n70_30_on_val:\nLogistic Regression: ", logistic_regression_score_on_val_70_30, "\nSGD: ", Stochastic_Gradient_score_on_val_70_30,
+          "\nNeuron network: ", neuron_network_score_on_val_70_30, "\nGradient Boosting", gradient_boosting_score_on_val_70_30, )
     print("\n\n10_90_on_val:\nLogistic Regression: ", logistic_regression_score_on_val_10_90, "\nSGD: ", Stochastic_Gradient_Descent_score_on_val_10_90,
           "\nNeuron network: ",neuron_network_score_on_val_10_90, "\nGradient Boosting ", gradient_boosting_score_on_val_10_90)
 
@@ -138,6 +151,11 @@ def Wyniki(data_mck):
     Wykres(fpr_sgd_70_30, tpr_sgd_70_30,auc_sgd_70_30,fpr_sgd_10_90, tpr_sgd_10_90,auc_sgd_10_90, "Stochastic Gradient Descent")
     Wykres(fpr_nn_70_30,tpr_nn_70_30, auc_nn_70_30, fpr_nn_10_90,tpr_nn_10_90, auc_nn_10_90, "Neural Network")
     Wykres(fpr_gb_70_30, tpr_gb_70_30, auc_gb_70_30, fpr_gb_10_90, tpr_gb_10_90, auc_gb_10_90, "Gradient Boosting")
+
+    Wykres_4_na_1(fpr_lr_70_30,tpr_lr_70_30, auc_lr_70_30, fpr_sgd_70_30, tpr_sgd_70_30,auc_sgd_70_30, fpr_nn_70_30,tpr_nn_70_30, auc_nn_70_30
+     ,fpr_gb_70_30, tpr_gb_70_30, auc_gb_70_30, "70_30")
+    Wykres_4_na_1(fpr_lr_10_90,tpr_lr_10_90, auc_lr_10_90, fpr_sgd_10_90, tpr_sgd_10_90,auc_sgd_10_90, fpr_nn_10_90,tpr_nn_10_90, auc_nn_10_90,
+     fpr_gb_10_90, tpr_gb_10_90, auc_gb_10_90, "10_90")
 
 
     return {
