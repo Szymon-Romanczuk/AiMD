@@ -8,7 +8,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVR
 from sklearn import metrics
-import matpipplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 df = pd.read_excel(r'Dane2.xlsx')
