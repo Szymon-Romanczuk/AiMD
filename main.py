@@ -1,9 +1,8 @@
 import numpy as np
-import pandas as pd
 from sklearn.model_selection import train_test_split
 from methods import *
-from sklearn.ensemble import VotingClassifier
 from losowanie_danych import x_train, y_train, x_test, y_test, x_val, y_val
+from matplotlib import pyplot as plt
 
 
 
@@ -19,23 +18,23 @@ def make_hybrid_x(methods):
 def make_hybrid_model(x_train, x_test, y_train, y_test):
     wojtek_train = x_train[:, [33, 62, 10, 21, 49, 15, 18, 6, 48, 51, 24, 12, 19]]
     wojtek_test = x_test[:, [33, 62, 10, 21, 49, 15, 18, 6, 48, 51, 24, 12, 19]]
-    # wojtek_val = x_val[:, [33, 62, 10, 21, 49, 15, 18, 6, 48, 51, 24, 12, 19]]
+    wojtek_val = x_val[:, [33, 62, 10, 21, 49, 15, 18, 6, 48, 51, 24, 12, 19]]
 
     jakub_train = x_train[:, [7, 8, 22, 26, 29, 34, 35, 37, 40, 45, 47, 52, 61]]
     jakub_test = x_test[:, [7, 8, 22, 26, 29, 34, 35, 37, 40, 45, 47, 52, 61]]
-    # jakub_val = x_val[:, [7, 8, 22, 26, 29, 34, 35, 37, 40, 45, 47, 52, 61]]
+    jakub_val = x_val[:, [7, 8, 22, 26, 29, 34, 35, 37, 40, 45, 47, 52, 61]]
 
     szymon_train = x_train[:, [1, 9, 16, 20, 36, 38, 41, 42, 43, 44, 53, 58, 59]]
     szymon_test = x_test[:, [1, 9, 16, 20, 36, 38, 41, 42, 43, 44, 53, 58, 59]]
-    # szymon_val = x_val[:, [1, 9, 16, 20, 36, 38, 41, 42, 43, 44, 53, 58, 59]]
+    szymon_val = x_val[:, [1, 9, 16, 20, 36, 38, 41, 42, 43, 44, 53, 58, 59]]
 
     maciek_train = x_train[:, [9, 50, 54, 5, 32, 27, 28, 30, 25, 11, 3, 60, 0]]
     maciek_test = x_test[:, [9, 50, 54, 5, 32, 27, 28, 30, 25, 11, 3, 60, 0]]
-    # maciek_val = x_val[:, [9, 50, 54, 5, 32, 27, 28, 30, 25, 11, 3, 60, 0]]
+    maciek_val = x_val[:, [9, 50, 54, 5, 32, 27, 28, 30, 25, 11, 3, 60, 0]]
 
     bartek_train = x_train[:, [23, 55, 57, 17, 56, 13, 39, 46, 31, 14, 63, 64, 2]]
     bartek_test = x_test[:, [23, 55, 57, 17, 56, 13, 39, 46, 31, 14, 63, 64, 2]]
-    # bartek_val = x_val[:, [23, 55, 57, 17, 56, 13, 39, 46, 31, 14, 63, 64, 2]]
+    bartek_val = x_val[:, [23, 55, 57, 17, 56, 13, 39, 46, 31, 14, 63, 64, 2]]
 
     # wojtek: decision tree, random forest, naive bayes, logistic regression
     # jakub: knn, random forest, svc, naive bayes
@@ -56,7 +55,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
     bartek_dt = decision_tree(bartek_train, y_train, bartek_test)
     bartek_knn = KNN(bartek_train, y_train, bartek_test)
     bartek_svc = SVC(bartek_train, y_train, bartek_test)
-    # bartek_svr = svr(bartek_train, y_train, bartek_test)
+    bartek_svr = svr(bartek_train, y_train, bartek_test)
 
     maciek_lg = logistic_regression(maciek_train, y_train, maciek_test)
     maciek_nn = natural_network(maciek_train, y_train, maciek_test)
@@ -68,7 +67,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
     szymon_gb = gradient_boosting(szymon_train, y_train, szymon_test)
     szymon_rn = radius_neighbors(szymon_train, y_train, szymon_test)
 
-    models =  [
+    models = [
         wojtek_dt,
         wojtek_rf,
         wojtek_gnb,
@@ -90,26 +89,30 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
         szymon_gb,
         szymon_rn,
     ]
-    for model in  models:
-        print(score(model,y_test))
     return models
 
 
+def hybrid(x_train, x_test, y_train, y_test):
+    methods_v1 = make_hybrid_model(x_train, x_train, y_train, y_train)
+    hybrid_train = make_hybrid_x(methods_v1)
 
-methods = make_hybrid_model(x_train, x_train, y_train, y_train)
-hybrid_train = make_hybrid_x(methods)
-hybrid_model = natural_network(hybrid_train, y_train, hybrid_train)
+    methods_v2 = make_hybrid_model(x_train, x_test, y_train, y_test)
+    hybrid_test = make_hybrid_x(methods_v2)
+    hybrid_m = hybrid_model(hybrid_train, y_train, hybrid_test)
+    Wykres(hybrid_m, y_test, 'Model hybrydowy')
+    return score(hybrid_m, y_test)
 
-print(hybrid_model)
-print(score(hybrid_model, y_train))
-print('!!!!')
-methods2 = make_hybrid_model(x_train, x_test, y_train, y_test)
-hybrid_test = make_hybrid_x(methods2)
-hybrid_model2 = natural_network(hybrid_train, y_train, hybrid_test)
 
-print(hybrid_model2)
-print(score(hybrid_model2, y_test))
-print('!!!!')
+#print(hybrid(x_train, x_train, y_train, y_train))
+plt.title('Testowa')
+print(hybrid(x_train, x_test, y_train, y_test))
+plt.show()
+#plt.clf()
+plt.title('Walidacyjna')
+print(hybrid(x_train, x_val, y_train, y_val))
+plt.show()
+
+
 
 # eclf1 = eclf1.fit(x, y)
 # print(eclf1.predict(x))

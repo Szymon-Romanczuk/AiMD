@@ -33,6 +33,8 @@ def KNN(X_train, X_test, y_train, y_test, X_val, y_val):
     predictions_knn = knn.predict(X_test)
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_knn)
     auc = metrics.roc_auc_score(y_test, predictions_knn)
+    
+    print(confusion_matrix(y_test, predictions_knn))
 
     return knn_score, knn_score_on_train, knn_score_on_val, fpr, tpr, auc
 
@@ -50,6 +52,7 @@ def SVC(X_train, X_test, y_train, y_test, X_val, y_val):
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_svc)
     auc = metrics.roc_auc_score(y_test, predictions_svc)
 
+    print(confusion_matrix(y_test, predictions_svc))
     return svc_score, svc_score_on_train, svc_score_on_val, fpr, tpr, auc
 
 #drzewo decyzyjne
@@ -62,6 +65,8 @@ def DecisionTree(X_train, X_test, y_train, y_test, X_val, y_val):
     prediction_decision_tree= decision_tree.predict(X_test)
     fpr, tpr, _ = metrics.roc_curve(y_test, prediction_decision_tree)
     auc = metrics.roc_auc_score(y_test, prediction_decision_tree)
+    
+    print(confusion_matrix(y_test, predictions_decision_tree))
 
     return decision_tree_score, decision_tree_score_on_train, decision_tree_score_on_val, fpr, tpr, auc
 
@@ -77,7 +82,8 @@ def SVR(X_train, X_test, y_train, y_test, X_val, y_val):
     predictions_svr = svr.predict(X_test)
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_svr)
     auc = metrics.roc_auc_score(y_test, predictions_svr)
-
+    
+    print(confusion_matrix(y_test, predictions_svr))
     return svr_score, svr_score_on_train, svr_score_on_val, fpr, tpr, auc
 
 def Wykres(fpr1, tpr1, auc1, fpr2, tpr2, auc2, method):

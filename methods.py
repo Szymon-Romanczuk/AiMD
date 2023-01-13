@@ -1,3 +1,6 @@
+from matplotlib import pyplot as plt
+from sklearn import metrics
+from sklearn.metrics import confusion_matrix
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -60,6 +63,13 @@ def linear_discriminant_analysis(x_train, y_train, x_test):
 
 
 def natural_network(x_train, y_train, x_test):
+    clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(9, 5, 3), random_state=1, max_iter=6000)
+    clf.fit(x_train, y_train.ravel())
+
+    return clf.predict(x_test)
+
+
+def hybrid_model(x_train, y_train, x_test):
     clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(14, 8, 6, 3, 2), random_state=1, max_iter=6000)
     clf.fit(x_train, y_train.ravel())
 
@@ -90,10 +100,10 @@ def svr(x_train, y_train, x_test):
 
 
 def SGD(x_train, y_train, x_test):
-	sgd_mck = SGDClassifier()
-	sgd_mck.fit(x_train, y_train.ravel())
+    sgd_mck = SGDClassifier()
+    sgd_mck.fit(x_train, y_train.ravel())
 
-	return sgd_mck.predict(x_test)
+    return sgd_mck.predict(x_test)
 
 
 def score(y_predict, y):
@@ -102,3 +112,21 @@ def score(y_predict, y):
         if y_predict[i] == y[i]:
             x = x + 1
     return x/y.__len__()
+
+
+def ROC(y_predict, y):
+    fpr, tpr, _ = metrics.roc_curve(y, y_predict)
+    auc = metrics.roc_auc_score(y, y_predict)
+    return fpr, tpr, auc
+
+
+def Wykres(y_predict, y, title):
+    fpr, tpr, auc = ROC(y_predict, y)
+    plt.plot(fpr, tpr, label=title + " " + str(auc))
+    # plt.plot(fpr2, tpr2, label="100 0")
+    plt.ylabel('True Positive Rage')
+    plt.xlabel('False Positive Rate')
+    plt.legend(loc=4)
+
+
+
