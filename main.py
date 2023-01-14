@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
 from methods import *
-from losowanie_danych import x_train, y_train, x_test, y_test, x_val, y_val
+from losowanie_danych import r10_90, r70_30
 from matplotlib import pyplot as plt
 
 
@@ -55,7 +55,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
     bartek_dt = decision_tree(bartek_train, y_train, bartek_test)
     bartek_knn = KNN(bartek_train, y_train, bartek_test)
     bartek_svc = SVC(bartek_train, y_train, bartek_test)
-    bartek_svr = svr(bartek_train, y_train, bartek_test)
+    bartek_ld = linear_discriminant_analysis(bartek_train, y_train, bartek_test)
 
     maciek_lg = logistic_regression(maciek_train, y_train, maciek_test)
     maciek_nn = natural_network(maciek_train, y_train, maciek_test)
@@ -79,7 +79,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
         bartek_dt,
         bartek_knn,
         bartek_svc,
-        # bartek_svr,
+        bartek_ld,
         maciek_lg,
         maciek_nn,
         maciek_gb,
@@ -99,23 +99,33 @@ def hybrid(x_train, x_test, y_train, y_test):
     methods_v2 = make_hybrid_model(x_train, x_test, y_train, y_test)
     hybrid_test = make_hybrid_x(methods_v2)
     hybrid_m = hybrid_model(hybrid_train, y_train, hybrid_test)
-    Wykres(hybrid_m, y_test, 'Model hybrydowy')
+    Wykres(hybrid_m, y_test, 'Model hybrydowy AUC = ')
     return score(hybrid_m, y_test)
 
 
 #print(hybrid(x_train, x_train, y_train, y_train))
-plt.title('Ucząca 70 30')
-print(hybrid(x_train, x_train, y_train, y_train))
-plt.show()
-plt.title('Testowa 70 30')
-print(hybrid(x_train, x_test, y_train, y_test))
-plt.show()
-#plt.clf()
-plt.title('Walidacyjna 70 30')
+
+#x_train, x_test, x_val, y_train, y_test, y_val = r70_30()
+#print(hybrid(x_train, x_train, y_train, y_train))
+
+#plt.title("Testowa 70 30")
+#print(hybrid(x_train, x_test, y_train, y_test))
+
+
+
+#print(hybrid(x_train, x_val, y_train, y_val))
+
+
+x_train, x_test, x_val, y_train, y_test, y_val = r10_90()
+#plt.title("Testowa 10 90")
+#print(hybrid(x_train, x_train, y_train, y_train))
+
+#print(hybrid(x_train, x_test, y_train, y_test))
+
+plt.title("Waliadcyjna 10 90")
 print(hybrid(x_train, x_val, y_train, y_val))
+
 plt.show()
-
-
 
 # eclf1 = eclf1.fit(x, y)
 # print(eclf1.predict(x))
