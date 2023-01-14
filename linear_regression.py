@@ -4,8 +4,9 @@ import statsmodels.api as sm
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
-from losowanie_danych import x_train, y_train, x_test, y_test
+from losowanie_danych import r70_30
 
+x_train, x_test, _, y_train, y_test, _ = r70_30()
 
 # fit the model on the training data with all possible predictors
 def stepwise_linear_regression(x_training, y_training, x_testing, y_testing):
@@ -29,7 +30,7 @@ def stepwise_linear_regression(x_training, y_training, x_testing, y_testing):
     X_train_new = sm.add_constant(X_train_new)
     model_new = sm.OLS(y_train, X_train_new).fit()
 
-    X_test = sm.add_constant(x_test)
+    X_test = sm.add_constant(x_testing)
     X_test_new = X_test[:, predictors]
     X_test_new = sm.add_constant(X_test_new)
 
@@ -68,7 +69,7 @@ def backwards_linear_regression(x_training, y_training, x_testing, y_testing):
     X_train_new = sm.add_constant(X_train_new)
     model_new = sm.OLS(y_train, X_train_new).fit()
 
-    X_test = sm.add_constant(x_test)
+    X_test = sm.add_constant(x_testing)
     X_test_new = X_test[:, predictors]
     X_test_new = sm.add_constant(X_test_new)
 
