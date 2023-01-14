@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
 from losowanie_danych import x_train, y_train, x_test, y_test
@@ -26,12 +27,17 @@ def stepwise_linear_regression(x_training, y_training, x_testing, y_testing):
     # fit the model again with the selected predictors
     X_train_new = X_train[:, predictors]
     X_train_new = sm.add_constant(X_train_new)
-    model_new = sm.OLS(y_training, X_train_new).fit()
+    model_new = sm.OLS(y_train, X_train_new).fit()
+
+    X_test = sm.add_constant(x_test)
+    X_test_new = X_test[:, predictors]
+    X_test_new = sm.add_constant(X_test_new)
 
     # get the score on the test data
-    X_test = sm.add_constant(x_test)
-    y_pred = model_new.predict(X_test[:, predictors])
-    score = r2_score(y_test, y_pred)
+
+    y_pred = model_new.predict(X_test_new)
+    # print(len(y_pred))
+    score = r2_score(y_testing, y_pred)
     print(score)
 
 
@@ -56,18 +62,20 @@ def backwards_linear_regression(x_training, y_training, x_testing, y_testing):
         idx_max = p_values[0].idxmax()
         predictors = [p for i, p in enumerate(predictors) if i != idx_max]
         p_values = p_values.drop(idx_max)
-        # idx_max = np.argmax(p_values)
-        # predictors.remove(idx_max)
-        # p_values = np.delete(p_values, idx_max)
 
     # fit the model again with the selected predictors
     X_train_new = X_train[:, predictors]
     X_train_new = sm.add_constant(X_train_new)
-    model_new = sm.OLS(y_training, X_train_new).fit()
+    model_new = sm.OLS(y_train, X_train_new).fit()
+
+    X_test = sm.add_constant(x_test)
+    X_test_new = X_test[:, predictors]
+    X_test_new = sm.add_constant(X_test_new)
 
     # get the score on the test data
-    X_test = sm.add_constant(x_testing)
-    y_pred = model_new.predict(X_test[:, predictors])
+
+    y_pred = model_new.predict(X_test_new)
+    # print(len(y_pred))
     score = r2_score(y_testing, y_pred)
     print(score)
 
