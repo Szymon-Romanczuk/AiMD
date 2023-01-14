@@ -49,7 +49,7 @@ def KNN(x_train, y_train, x_test):
 
 def SVC(x_train, y_train, x_test):
     from sklearn.svm import SVC
-    svc = SVC(probability=True, kernel='linear')
+    svc = SVC(probability=True, kernel='linear', random_state=0)
     svc.fit(x_train, y_train.ravel())
 
     return svc.predict(x_test)
@@ -70,7 +70,7 @@ def natural_network(x_train, y_train, x_test):
 
 
 def hybrid_model(x_train, y_train, x_test):
-    clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(14, 8, 6, 3, 2), random_state=1, max_iter=6000)
+    clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(9, 5, 3), random_state=1, max_iter=6000)
     clf.fit(x_train, y_train.ravel())
 
     return clf.predict(x_test)
@@ -90,17 +90,8 @@ def radius_neighbors(x_train, y_train, x_test):
     return clf.predict(x_test)
 
 
-def svr(x_train, y_train, x_test):
-    from sklearn.svm import SVR
-
-    svr = SVR(C=1.0, epsilon=0.2)
-    svr.fit(x_train, y_train.ravel())
-
-    return svr.predict(x_test)
-
-
 def SGD(x_train, y_train, x_test):
-    sgd_mck = SGDClassifier()
+    sgd_mck = SGDClassifier(random_state=0)
     sgd_mck.fit(x_train, y_train.ravel())
 
     return sgd_mck.predict(x_test)
