@@ -69,15 +69,22 @@ def natural_network(x_train, y_train, x_test):
     return clf.predict(x_test)
 
 
-def hybrid_model(x_train, y_train, x_test):
+def hybrid_model(x_train, y_train):
     clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(9, 5, 3), random_state=1, max_iter=6000)
     clf.fit(x_train, y_train.ravel())
 
-    return clf.predict(x_test)
+    return clf
+
+
+def jednoimmienna(x_train, y_train):
+    rf = LinearDiscriminantAnalysis()
+    rf.fit(x_train, y_train.ravel())
+
+    return rf
 
 
 def gradient_boosting(x_train, y_train, x_test):
-    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
+    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=50, random_state=0)
     clf.fit(x_train, y_train.ravel())
 
     return clf.predict(x_test)
@@ -102,23 +109,24 @@ def score(y_predict, y):
     for i in range(0, y.__len__()):
         if y_predict[i] == y[i]:
             x = x + 1
-    return x/y.__len__()
+    return x / y.__len__()
 
 
 def ROC(y_predict, y):
     fpr, tpr, _ = metrics.roc_curve(y, y_predict)
     auc = metrics.roc_auc_score(y, y_predict)
-    print(confusion_matrix(y, y_predict))
+    #print(confusion_matrix(y, y_predict))
     return fpr, tpr, auc
 
 
-def Wykres(y_predict, y, title):
+def Wykres(clf, x, y, title):
+    y_predict = clf.predict_proba(x)[::, 1]
     fpr, tpr, auc = ROC(y_predict, y)
     plt.plot(fpr, tpr, label=title + " " + str(auc))
     # plt.plot(fpr2, tpr2, label="100 0")
     plt.ylabel('True Positive Rage')
     plt.xlabel('False Positive Rate')
     plt.legend(loc=4)
-
-
+    y_predict = clf.predict(x)
+    print(confusion_matrix(y, y_predict))
 
