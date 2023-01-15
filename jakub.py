@@ -36,12 +36,13 @@ def div10_90 (X, y):
 
 #KNN
 def KNN(X_train, X_test, y_train, y_test, X_val, y_val):
-    knn = KNeighborsClassifier(n_neighbors=2)  # n_neighbors=10
+    knn = KNeighborsClassifier(n_neighbors=50)  # n_neighbors=10
     knn.fit(X_train, y_train)
     knn_score = knn.score(X_test,y_test)
     knn_score_on_train = knn.score(X_train, y_train)
     knn_score_on_val = knn.score(X_val, y_val)
-    predictions_knn = knn.predict(X_test)
+    #predictions_decision_tree = dt.predict_proba(x_test)[::, 1]
+    predictions_knn = knn.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_knn)
     auc = metrics.roc_auc_score(y_test, predictions_knn)
     #print(confusion_matrix(y_test, predictions_knn))
@@ -56,7 +57,7 @@ def RF(X_train, X_test, y_train, y_test, X_val, y_val):
     rf_score = rf.score(X_test,y_test)
     rf_score_on_train = rf.score(X_train,y_train)
     rf_score_on_val = rf.score(X_val,y_val)
-    predictions_rf = rf.predict(X_test)
+    predictions_rf = rf.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_rf)
     auc = metrics.roc_auc_score(y_test, predictions_rf)
     #print(confusion_matrix(y_test, predictions_rf))
@@ -72,7 +73,7 @@ def SVC(X_train, X_test, y_train, y_test, X_val, y_val):
     svc_score = svc.score(X_test, y_test)
     svc_score_on_train = svc.score(X_train, y_train)
     svc_score_on_val = svc.score(X_val, y_val)
-    predictions_svc= svc.predict(X_test)
+    predictions_svc= svc.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_svc)
     auc = metrics.roc_auc_score(y_test, predictions_svc)
     #print(confusion_matrix(y_test, predictions_svc))
@@ -88,7 +89,7 @@ def GNB(X_train, X_test, y_train, y_test, X_val, y_val):
     gnb_score = gnb.score(X_test, y_test)
     gnb_score_on_train = gnb.score(X_train, y_train)
     gnb_score_on_val = gnb.score(X_val, y_val)
-    predictions_gnb = gnb.predict(X_test)
+    predictions_gnb = gnb.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_gnb)
     auc = metrics.roc_auc_score(y_test, predictions_gnb)
     #print(confusion_matrix(y_test, predictions_gnb))
