@@ -27,12 +27,12 @@ def div10_90 (X, y):
 
 #KNN
 def KNN(X_train, X_test, y_train, y_test, X_val, y_val):
-    knn = KNeighborsClassifier(n_neighbors=2)  # n_neighbors=10
+    knn = KNeighborsClassifier(n_neighbors=50)  # n_neighbors=2
     knn.fit(X_train, y_train)
     knn_score = knn.score(X_test,y_test)
     knn_score_on_train = knn.score(X_train, y_train)
     knn_score_on_val = knn.score(X_val, y_val)
-    predictions_knn = knn.predict(X_test)
+    predictions_knn = knn.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_knn)
     auc = metrics.roc_auc_score(y_test, predictions_knn)
     
@@ -50,7 +50,7 @@ def SVC(X_train, X_test, y_train, y_test, X_val, y_val):
     svc_score = svc.score(X_test, y_test)
     svc_score_on_train = svc.score(X_train, y_train)
     svc_score_on_val = svc.score(X_val, y_val)
-    predictions_svc= svc.predict(X_test)
+    predictions_svc= svc.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_svc)
     auc = metrics.roc_auc_score(y_test, predictions_svc)
 
@@ -59,12 +59,12 @@ def SVC(X_train, X_test, y_train, y_test, X_val, y_val):
 
 #drzewo decyzyjne
 def DecisionTree(X_train, X_test, y_train, y_test, X_val, y_val):
-    decision_tree = DecisionTreeClassifier(random_state=0, max_depth=2)
+    decision_tree = DecisionTreeClassifier(random_state=0, max_depth=30)
     decision_tree = decision_tree.fit(X_test, y_test)
     decision_tree_score = decision_tree.score(X_test,y_test)
     decision_tree_score_on_train = decision_tree.score(X_train,y_train)
     decision_tree_score_on_val = decision_tree.score(X_val,y_val)
-    prediction_decision_tree= decision_tree.predict(X_test)
+    prediction_decision_tree= decision_tree.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test, prediction_decision_tree)
     auc = metrics.roc_auc_score(y_test, prediction_decision_tree)
     
@@ -81,7 +81,7 @@ def LDA(X_train, X_test, y_train, y_test, X_val, y_val):
     clf_score = clf.score(X_test, y_test)
     clf_score_on_train = clf.score(X_train, y_train)
     clf_score_on_val = clf.score(X_val, y_val)
-    predictions_clf = clf.predict(X_test)
+    predictions_clf = clf.predict_proba(X_test)[::,1]
     fpr, tpr, _ = metrics.roc_curve(y_test, predictions_clf)
     auc = metrics.roc_auc_score(y_test, predictions_clf)
     
@@ -97,7 +97,17 @@ def Wykres(fpr1, tpr1, auc1, fpr2, tpr2, auc2, method):
     plt.legend(loc=4)
     plt.show()
 
-
+def Wykres_4_na_1(fpr1, tpr1, auc1, fpr2, tpr2, auc2, fpr3, tpr3, auc3, fpr4, tpr4, auc4, title):
+    plt.plot(fpr1, tpr1, label="KNN AUC=" + str(auc1))
+    plt.plot(fpr2, tpr2, label="RF AUC=" + str(auc2))
+    plt.plot(fpr3, tpr3, label="SVC AUC=" + str(auc3))
+    plt.plot(fpr4, tpr4, label="GNB AUC=" + str(auc4))
+    # plt.plot(fpr2, tpr2, label="100 0")
+    plt.title(title)
+    plt.ylabel('True Positive Rage')
+    plt.xlabel('False Positive Rate')
+    plt.legend(loc=4)
+    plt.show()
 
 def Print_scores(knn_score_70_30, knn_score_on_train_70_30, decision_tree_score_70_30, decision_tree_score_on_train_70_30, svc_score_70_30,
                  svc_score_on_train_70_30, svr_score_70_30, svr_score_on_train_70_30, knn_score_10_90,
@@ -161,9 +171,14 @@ def BG_wywołaj(df):
 
 
     Wykres(fpr_knn_70_30,tpr_knn_70_30, auc_knn_70_30, fpr_knn_10_90, tpr_knn_10_90, auc_knn_10_90, "K Nearest Neighbors")
-    Wykres(fpr_decision_tree_70_30, tpr_decision_tree_70_30,auc_decision_tree_70_30,fpr_decision_tree_10_90, tpr_decision_tree_10_90, auc_decision_tree_10_90, "Decision tree")
+    Wykres(fpr_decision_tree_70_30, tpr_decision_tree_70_30,auc_decision_tree_70_30,fpr_decision_tree_10_90,
+           tpr_decision_tree_10_90, auc_decision_tree_10_90, "Decision tree")
     Wykres(fpr_svc_70_30,tpr_svc_70_30, auc_svc_70_30, fpr_svc_10_90, tpr_svc_10_90, auc_svc_10_90, "Support Vector Classification")
     Wykres(fpr_svr_70_30, tpr_svr_70_30, auc_svr_70_30, fpr_svr_10_90, tpr_svr_10_90, auc_svr_10_90, "Linear Discriminant Analysis")
+
+    Wykres_4_na_1(fpr_knn_70_30,tpr_knn_70_30, auc_knn_70_30, fpr_decision_tree_70_30, tpr_decision_tree_70_30,auc_decision_tree_10_90,fpr_svc_70_30,tpr_svc_70_30, auc_svc_70_30,fpr_svr_70_30, tpr_svr_70_30, auc_svr_70_30,"70 30")
+    Wykres_4_na_1(fpr_knn_10_90, tpr_knn_10_90, auc_knn_10_90,fpr_decision_tree_10_90,
+           tpr_decision_tree_10_90, auc_decision_tree_10_90,fpr_svc_10_90, tpr_svc_10_90, auc_svc_10_90,fpr_svr_10_90, tpr_svr_10_90, auc_svr_10_90,"90 10")
 
     return {
         "70_30": {
