@@ -21,10 +21,14 @@ def decision_tree(x_train, y_train, x_test):
 
 
 def random_forest(x_train, y_train, x_test):
+    rf = random_forest_model(x_train, y_train)
+    return rf.predict(x_test)
+
+
+def random_forest_model(x_train, y_train):
     rf = RandomForestClassifier(max_depth=15, random_state=0)
     rf.fit(x_train, y_train.ravel())
-
-    return rf.predict(x_test)
+    return rf
 
 
 def gaussian_naive_bayes(x_train, y_train, x_test):
@@ -35,10 +39,14 @@ def gaussian_naive_bayes(x_train, y_train, x_test):
 
 
 def logistic_regression(x_train, y_train, x_test):
+    lg = logistic_regression_model(x_train, y_train)
+    return lg.predict(x_test)
+
+
+def logistic_regression_model(x_train, y_train):
     lg = LogisticRegression(random_state=0)
     lg.fit(x_train, y_train.ravel())
-
-    return lg.predict(x_test)
+    return lg
 
 
 def KNN(x_train, y_train, x_test):
@@ -56,11 +64,14 @@ def SVC(x_train, y_train, x_test):
 
 
 def linear_discriminant_analysis(x_train, y_train, x_test):
-    clf = LinearDiscriminantAnalysis()
-    clf.fit(x_train, y_train.ravel())
-
+    clf = linear_discrimanant_analysis_model(x_train, y_train)
     return clf.predict(x_test)
 
+
+def linear_discrimanant_analysis_model(x_train, y_train):
+    clf = LinearDiscriminantAnalysis()
+    clf.fit(x_train, y_train.ravel())
+    return clf
 
 def natural_network(x_train, y_train, x_test):
     clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(9, 5, 3), random_state=1, max_iter=6000)
@@ -102,7 +113,6 @@ def SGD(x_train, y_train, x_test):
     sgd_mck.fit(x_train, y_train.ravel())
 
     return sgd_mck.predict(x_test)
-
 
 def score(y_predict, y):
     x = 0.0
