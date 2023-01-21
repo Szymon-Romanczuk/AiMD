@@ -10,6 +10,7 @@ from sklearn.metrics import roc_curve
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
+from sklearn.calibration import CalibratedClassifierCV
 
 data_mck=pd.read_excel(r'maciek_excel.xlsx')
 
@@ -24,54 +25,78 @@ def div10_90 (X, y):
 
 
 #regresja logistyczna
-def RL(X_train, X_test, y_train, y_test,X_val, y_val):
+def RL(X_train, X_test, y_train, y_test,X_val, y_val,X,y):
     log_reg_mck = LogisticRegression()
     log_reg_mck.fit(X_train, y_train)
+
     log_reg_score_mck=log_reg_mck.score(X_test,y_test)
     log_reg_score_on_train_mck=log_reg_mck.score(X_train, y_train)
     log_rec_score_on_val_mck=log_reg_mck.score(X_val,y_val)
-    predictions_log_reg_mck = log_reg_mck.predict(X_test)
-    fpr, tpr, _ = metrics.roc_curve(y_test, predictions_log_reg_mck)
-    auc = metrics.roc_auc_score(y_test, predictions_log_reg_mck)
-    return log_reg_score_mck,log_reg_score_on_train_mck,log_rec_score_on_val_mck,fpr, tpr, auc
+    log_reg_score_on_train_test=log_reg_mck.score(X,y)
+
+
+    predictions_log_reg_mck = log_reg_mck.predict_proba(X_val)[::, 1]
+    
+
+
+    fpr, tpr, _ = metrics.roc_curve(y_val, predictions_log_reg_mck)
+    auc = metrics.roc_auc_score(y_val, predictions_log_reg_mck)
+    #print(confusion_matrix(y_val, predictions_log_reg_mck1))
+    return log_reg_score_mck,log_reg_score_on_train_mck,log_rec_score_on_val_mck,fpr, tpr, auc,log_reg_score_on_train_test
 
 
  #Stochastic Gradient Descent
-def SGD(X_train, X_test, y_train, y_test,X_val, y_val):
+def SGD(X_train, X_test, y_train, y_test,X_val, y_val,X,y):
     sgd_mck = SGDClassifier()
-    sgd_mck.fit(X_train, y_train)
+    clf=sgd_mck.fit(X_train, y_train)
+    calibrator = CalibratedClassifierCV(clf, cv='prefit')
+    sgd_mck=calibrator.fit(X_train, y_train)
+
     sgd_mck_score=sgd_mck.score(X_test,y_test)
     sgd_mck_on_train_score=sgd_mck.score(X_train, y_train)
     sgd_mck_on_val_score=sgd_mck.score(X_val,y_val)
-    predictions_sgd_mck = sgd_mck.predict(X_test)
-    fpr, tpr, _ = metrics.roc_curve(y_test, predictions_sgd_mck)
-    auc = metrics.roc_auc_score(y_test, predictions_sgd_mck)
-    return sgd_mck_score,sgd_mck_on_train_score,sgd_mck_on_val_score,fpr, tpr, auc
+    sgd_mck_score_on_train_test=sgd_mck.score(X,y)
+
+    predictions_sgd_mck = sgd_mck.predict_proba(X_val)[::, 1]
+    fpr, tpr, _ = metrics.roc_curve(y_val, predictions_sgd_mck)
+    auc = metrics.roc_auc_score(y_val, predictions_sgd_mck)
+    #print(confusion_matrix(y_test, predictions_sgd_mck))
+    return sgd_mck_score,sgd_mck_on_train_score,sgd_mck_on_val_score,fpr, tpr, auc,sgd_mck_score_on_train_test
 
 
 #siec neuronowa
-def NN(X_train, X_test, y_train, y_test,X_val, y_val):
+def NN(X_train, X_test, y_train, y_test,X_val, y_val,X,y):
     neural_network_mck = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(9, 5, 3), random_state=1,max_iter=6000)
     neural_network_mck.fit(X_train,y_train)
+
     neural_network_score_mck = neural_network_mck.score(X_test,y_test)
     neural_network_on_train_score_mck=neural_network_mck.score(X_train, y_train)
     neural_network_on_val_score_mck=neural_network_mck.score(X_val, y_val)
-    predictions_neural_network_mck = neural_network_mck.predict(X_test)
-    fpr, tpr, _ = metrics.roc_curve(y_test, predictions_neural_network_mck)
-    auc = metrics.roc_auc_score(y_test, predictions_neural_network_mck)
-    return neural_network_score_mck,neural_network_on_train_score_mck,neural_network_on_val_score_mck, fpr, tpr, auc
+    neural_network_score_on_train_test = neural_network_mck.score(X,y)
+
+
+    predictions_neural_network_mck = neural_network_mck.predict_proba(X_val)[::, 1]
+    
+
+    fpr, tpr, _= metrics.roc_curve(y_val, predictions_neural_network_mck)
+    auc = metrics.roc_auc_score(y_val, predictions_neural_network_mck)
+    #print(confusion_matrix(y_test, predictions_neural_network_mck))
+    return neural_network_score_mck,neural_network_on_train_score_mck,neural_network_on_val_score_mck, fpr, tpr, auc,neural_network_score_on_train_test
 
 #Gradient boosting
-def gradient_boosting(X_train, X_test, y_train, y_test,X_val, y_val):
+def gradient_boosting(X_train, X_test, y_train, y_test,X_val, y_val,X,y):
     gb_mck = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
     gb_mck.fit(X_train, y_train.ravel())
+
     gb_mck_score_mck = gb_mck.score(X_test,y_test)
     gb_mck_on_train_score_mck=gb_mck.score(X_train, y_train)
     gb_mck_on_val_score_mck=gb_mck.score(X_val, y_val)
-    predictions_gb_mck_mck = gb_mck.predict(X_test)
-    fpr, tpr, _ = metrics.roc_curve(y_test, predictions_gb_mck_mck)
-    auc = metrics.roc_auc_score(y_test, predictions_gb_mck_mck)
-    return gb_mck_score_mck,gb_mck_on_train_score_mck,gb_mck_on_val_score_mck, fpr, tpr, auc
+    gb_mck_score_on_train_test = gb_mck.score(X,y)
+    predictions_gb_mck_mck = gb_mck.predict_proba(X_val)[::, 1]
+    fpr, tpr, _= metrics.roc_curve(y_val, predictions_gb_mck_mck)
+    auc = metrics.roc_auc_score(y_val, predictions_gb_mck_mck)
+    #print(confusion_matrix(y_test, predictions_gb_mck_mck))
+    return gb_mck_score_mck,gb_mck_on_train_score_mck,gb_mck_on_val_score_mck, fpr, tpr, auc,gb_mck_score_on_train_test
 
 
 def Wykres(fpr1, tpr1, auc1, fpr2, tpr2, auc2, method):
@@ -85,10 +110,10 @@ def Wykres(fpr1, tpr1, auc1, fpr2, tpr2, auc2, method):
     plt.show()
 
 def Wykres_4_na_1(fpr1, tpr1, auc1, fpr2, tpr2, auc2, fpr3, tpr3, auc3, fpr4, tpr4, auc4, title):
-    plt.plot(fpr1, tpr1, label="KNN AUC=" + str(auc1))
-    plt.plot(fpr2, tpr2, label="RF AUC=" + str(auc2))
-    plt.plot(fpr3, tpr3, label="SVC AUC=" + str(auc3))
-    plt.plot(fpr4, tpr4, label="GNB AUC=" + str(auc4))
+    plt.plot(fpr1, tpr1, label="LR AUC=" + str(auc1))
+    plt.plot(fpr2, tpr2, label="SGD AUC=" + str(auc2))
+    plt.plot(fpr3, tpr3, label="NN AUC=" + str(auc3))
+    plt.plot(fpr4, tpr4, label="GB AUC=" + str(auc4))
     # plt.plot(fpr2, tpr2, label="100 0")
     plt.title(title)
     plt.ylabel('True Positive Rage')
@@ -102,7 +127,8 @@ def print_scores_maciek(logistic_regression_score_70_30, logistic_regression_sco
                  logistic_regression_score_on_train_10_90, Stochastic_Gradient_Descent_score_10_90, Stochastic_Gradient_Descent_score_on_train_10_90, neuron_network_score_10_90,
                  neuron_network_score_on_train_10_90, gradient_boosting_score_10_90, gradient_boosting_score_on_train_10_90,logistic_regression_score_on_val_70_30,Stochastic_Gradient_score_on_val_70_30,
                  neuron_network_score_on_val_70_30,gradient_boosting_score_on_val_70_30,logistic_regression_score_on_val_10_90,Stochastic_Gradient_Descent_score_on_val_10_90,neuron_network_score_on_val_10_90
-                 ,gradient_boosting_score_on_val_10_90):
+                 ,gradient_boosting_score_on_val_10_90,log_reg_score_on_train_test_70_30,sgd_mck_score_on_train_test_70_30,neural_network_score_on_train_test_70_30,gb_mck_score_on_train_test_70_30,
+                 log_reg_score_on_train_test_10_90,sgd_mck_score_on_train_test_10_90,neural_network_score_on_train_test_10_90,gb_mck_score_on_train_test_10_90):
 
 
     print("70_30:\nLogistic Regression: ", logistic_regression_score_70_30,"\nSGD: ", Stochastic_Gradient_Descent_score_70_30, "\nNeuron network: ",
@@ -117,6 +143,10 @@ def print_scores_maciek(logistic_regression_score_70_30, logistic_regression_sco
           "\nNeuron network: ", neuron_network_score_on_val_70_30, "\nGradient Boosting", gradient_boosting_score_on_val_70_30, )
     print("\n\n10_90_on_val:\nLogistic Regression: ", logistic_regression_score_on_val_10_90, "\nSGD: ", Stochastic_Gradient_Descent_score_on_val_10_90,
           "\nNeuron network: ",neuron_network_score_on_val_10_90, "\nGradient Boosting ", gradient_boosting_score_on_val_10_90)
+    print("\n\n70_30_on_train_test:\nLogistic Regression: ", log_reg_score_on_train_test_70_30, "\nSGD: ", sgd_mck_score_on_train_test_70_30,
+          "\nNeural network: ", neural_network_score_on_train_test_70_30, "\nGradient Boosting", gb_mck_score_on_train_test_70_30, )
+    print("\n\n10_90_on_train_test:\nLogistic Regression: ", log_reg_score_on_train_test_10_90, "\nSGD: ", sgd_mck_score_on_train_test_10_90,
+          "\nNeural network: ",neural_network_score_on_train_test_10_90, "\nGradient Boosting ", gb_mck_score_on_train_test_10_90)
 
 def Wyniki(data_mck):
     X = data_mck.values
@@ -129,33 +159,34 @@ def Wyniki(data_mck):
     X_val = np.delete(X_val, 0, axis=1)#
 
     X70_train, X30_test, y70_train, y30_test = div70_30(X, y)
-    logistic_regression_score_70_30, logistic_regression_score_on_train_70_30,logistic_regression_score_on_val_70_30,fpr_lr_70_30,tpr_lr_70_30,auc_lr_70_30 = RL(X70_train, X30_test, y70_train, y30_test,X_val,y_val)
-    Stochastic_Gradient_Descent_score_70_30, Stochastic_Gradient_score_on_train_70_30,Stochastic_Gradient_score_on_val_70_30,fpr_sgd_70_30,tpr_sgd_70_30,auc_sgd_70_30 = SGD(X70_train, X30_test, y70_train, y30_test,X_val,y_val)
-    neuron_network_score_70_30, neuron_network_score_on_train_70_30,neuron_network_score_on_val_70_30,fpr_nn_70_30,tpr_nn_70_30,auc_nn_70_30 = NN(X70_train, X30_test, y70_train, y30_test,X_val,y_val)
-    gradient_boosting_score_70_30, gradient_boosting_score_on_train_70_30,gradient_boosting_score_on_val_70_30,fpr_gb_70_30,tpr_gb_70_30,auc_gb_70_30 = gradient_boosting(X70_train, X30_test, y70_train, y30_test,X_val,y_val)
+    logistic_regression_score_70_30, logistic_regression_score_on_train_70_30,logistic_regression_score_on_val_70_30,fpr_lr_70_30,tpr_lr_70_30,auc_lr_70_30,log_reg_score_on_train_test_70_30 = RL(X70_train, X30_test, y70_train, y30_test,X_val,y_val,X,y)
+    Stochastic_Gradient_Descent_score_70_30, Stochastic_Gradient_score_on_train_70_30,Stochastic_Gradient_score_on_val_70_30,fpr_sgd_70_30,tpr_sgd_70_30,auc_sgd_70_30,sgd_mck_score_on_train_test_70_30 = SGD(X70_train, X30_test, y70_train, y30_test,X_val,y_val,X,y)
+    neuron_network_score_70_30, neuron_network_score_on_train_70_30,neuron_network_score_on_val_70_30,fpr_nn_70_30,tpr_nn_70_30,auc_nn_70_30,neural_network_score_on_train_test_70_30 = NN(X70_train, X30_test, y70_train, y30_test,X_val,y_val,X,y)
+    gradient_boosting_score_70_30, gradient_boosting_score_on_train_70_30,gradient_boosting_score_on_val_70_30,fpr_gb_70_30,tpr_gb_70_30,auc_gb_70_30,gb_mck_score_on_train_test_70_30 = gradient_boosting(X70_train, X30_test, y70_train, y30_test,X_val,y_val,X,y)
 
     X10_train, X90_test, y10_train, y90_test = div10_90(X, y)
-    logistic_regression_score_10_90, logistic_regression_score_on_train_10_90,logistic_regression_score_on_val_10_90,fpr_lr_10_90,tpr_lr_10_90, auc_lr_10_90 = RL(X10_train, X90_test, y10_train, y90_test,X_val,y_val)
-    Stochastic_Gradient_Descent_score_10_90, Stochastic_Gradient_Descent_score_on_train_10_90,Stochastic_Gradient_Descent_score_on_val_10_90,fpr_sgd_10_90, tpr_sgd_10_90,auc_sgd_10_90 = SGD(X10_train, X90_test, y10_train, y90_test,X_val,y_val)
-    neuron_network_score_10_90, neuron_network_score_on_train_10_90,neuron_network_score_on_val_10_90, fpr_nn_10_90,tpr_nn_10_90, auc_nn_10_90 = NN(X10_train, X90_test, y10_train, y90_test,X_val,y_val)
-    gradient_boosting_score_10_90, gradient_boosting_score_on_train_10_90,gradient_boosting_score_on_val_10_90, fpr_gb_10_90, tpr_gb_10_90, auc_gb_10_90 = gradient_boosting(X10_train, X90_test, y10_train, y90_test,X_val,y_val)
+    logistic_regression_score_10_90, logistic_regression_score_on_train_10_90,logistic_regression_score_on_val_10_90,fpr_lr_10_90,tpr_lr_10_90, auc_lr_10_90,log_reg_score_on_train_test_10_90 = RL(X10_train, X90_test, y10_train, y90_test,X_val,y_val,X,y)
+    Stochastic_Gradient_Descent_score_10_90, Stochastic_Gradient_Descent_score_on_train_10_90,Stochastic_Gradient_Descent_score_on_val_10_90,fpr_sgd_10_90, tpr_sgd_10_90,auc_sgd_10_90,sgd_mck_score_on_train_test_10_90 = SGD(X10_train, X90_test, y10_train, y90_test,X_val,y_val,X,y)
+    neuron_network_score_10_90, neuron_network_score_on_train_10_90,neuron_network_score_on_val_10_90, fpr_nn_10_90,tpr_nn_10_90, auc_nn_10_90,neural_network_score_on_train_test_10_90 = NN(X10_train, X90_test, y10_train, y90_test,X_val,y_val,X,y)
+    gradient_boosting_score_10_90, gradient_boosting_score_on_train_10_90,gradient_boosting_score_on_val_10_90, fpr_gb_10_90, tpr_gb_10_90, auc_gb_10_90,gb_mck_score_on_train_test_10_90 = gradient_boosting(X10_train, X90_test, y10_train, y90_test,X_val,y_val,X,y)
 
     print_scores_maciek(logistic_regression_score_70_30, logistic_regression_score_on_train_70_30, Stochastic_Gradient_Descent_score_70_30, Stochastic_Gradient_score_on_train_70_30, neuron_network_score_70_30,
                  neuron_network_score_on_train_70_30, gradient_boosting_score_70_30, gradient_boosting_score_on_train_70_30, logistic_regression_score_10_90,
                  logistic_regression_score_on_train_10_90, Stochastic_Gradient_Descent_score_10_90, Stochastic_Gradient_Descent_score_on_train_10_90, neuron_network_score_10_90,
                  neuron_network_score_on_train_10_90, gradient_boosting_score_10_90, gradient_boosting_score_on_train_10_90,logistic_regression_score_on_val_70_30,Stochastic_Gradient_score_on_val_70_30,
                  neuron_network_score_on_val_70_30,gradient_boosting_score_on_val_70_30, logistic_regression_score_on_val_10_90,Stochastic_Gradient_Descent_score_on_val_10_90,neuron_network_score_on_val_10_90
-                 ,gradient_boosting_score_on_val_10_90)
+                 ,gradient_boosting_score_on_val_10_90,log_reg_score_on_train_test_70_30,sgd_mck_score_on_train_test_70_30,neural_network_score_on_train_test_70_30,gb_mck_score_on_train_test_70_30,
+                 log_reg_score_on_train_test_10_90,sgd_mck_score_on_train_test_10_90,neural_network_score_on_train_test_10_90,gb_mck_score_on_train_test_10_90)
     
-    Wykres(fpr_lr_70_30,tpr_lr_70_30, auc_lr_70_30,fpr_lr_10_90,tpr_lr_10_90, auc_lr_10_90, "Logistic Regression")
-    Wykres(fpr_sgd_70_30, tpr_sgd_70_30,auc_sgd_70_30,fpr_sgd_10_90, tpr_sgd_10_90,auc_sgd_10_90, "Stochastic Gradient Descent")
-    Wykres(fpr_nn_70_30,tpr_nn_70_30, auc_nn_70_30, fpr_nn_10_90,tpr_nn_10_90, auc_nn_10_90, "Neural Network")
-    Wykres(fpr_gb_70_30, tpr_gb_70_30, auc_gb_70_30, fpr_gb_10_90, tpr_gb_10_90, auc_gb_10_90, "Gradient Boosting")
+    # Wykres(fpr_lr_70_30,tpr_lr_70_30, auc_lr_70_30,fpr_lr_10_90,tpr_lr_10_90, auc_lr_10_90, "Logistic Regression")
+    # Wykres(fpr_sgd_70_30, tpr_sgd_70_30,auc_sgd_70_30,fpr_sgd_10_90, tpr_sgd_10_90,auc_sgd_10_90, "Stochastic Gradient Descent")
+    # Wykres(fpr_nn_70_30,tpr_nn_70_30, auc_nn_70_30, fpr_nn_10_90,tpr_nn_10_90, auc_nn_10_90, "Neural Network")
+    # Wykres(fpr_gb_70_30, tpr_gb_70_30, auc_gb_70_30, fpr_gb_10_90, tpr_gb_10_90, auc_gb_10_90, "Gradient Boosting")
 
-    Wykres_4_na_1(fpr_lr_70_30,tpr_lr_70_30, auc_lr_70_30, fpr_sgd_70_30, tpr_sgd_70_30,auc_sgd_70_30, fpr_nn_70_30,tpr_nn_70_30, auc_nn_70_30
-     ,fpr_gb_70_30, tpr_gb_70_30, auc_gb_70_30, "70_30")
-    Wykres_4_na_1(fpr_lr_10_90,tpr_lr_10_90, auc_lr_10_90, fpr_sgd_10_90, tpr_sgd_10_90,auc_sgd_10_90, fpr_nn_10_90,tpr_nn_10_90, auc_nn_10_90,
-     fpr_gb_10_90, tpr_gb_10_90, auc_gb_10_90, "10_90")
+    # Wykres_4_na_1(fpr_lr_70_30,tpr_lr_70_30, auc_lr_70_30, fpr_sgd_70_30, tpr_sgd_70_30,auc_sgd_70_30, fpr_nn_70_30,tpr_nn_70_30, auc_nn_70_30
+    #  ,fpr_gb_70_30, tpr_gb_70_30, auc_gb_70_30, "70_30 na walidacyjnej")
+    # Wykres_4_na_1(fpr_lr_10_90,tpr_lr_10_90, auc_lr_10_90, fpr_sgd_10_90, tpr_sgd_10_90,auc_sgd_10_90, fpr_nn_10_90,tpr_nn_10_90, auc_nn_10_90,
+    #  fpr_gb_10_90, tpr_gb_10_90, auc_gb_10_90, "10_90 na walidacyjnej")
 
 
     return {
