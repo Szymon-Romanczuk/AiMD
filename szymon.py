@@ -32,7 +32,7 @@ def natural_network(study):
 
 def gradient_boosting(study):
     X_study, Y_study = sapareteXY(study)
-    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
+    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=50, random_state=0)
     clf.fit(X_study, Y_study)
 
     return clf
@@ -52,8 +52,7 @@ def test_model(clf, test):
 
 def plot(clf, test, title):
     X, Y = sapareteXY(test)
-    y_predict = clf.predict(X)
-    Wykres(y_predict, Y, title)
+    Wykres(clf, X, Y, title)
 
 
 def sapareteXY(data):
@@ -69,12 +68,12 @@ def analize(study, test, name):
     gb = gradient_boosting(study)
     rn = radius_neighbors(study)
 
-    #plot(lda, test, name)
-    #plot(nn, test, name)
-    #plot(gb, test, name)
-    plot(rn, test, name)
-    #plt.show()
-    #plt.clf()
+    plot(lda, test, 'Analiza dyskryminacyjna AUC = ')
+    plot(nn, test, 'Sieć Neuronowa AUC = ')
+    plot(gb, test, 'Gradient Boosting AUC = ')
+    plot(rn, test, 'Radius Neighbors AUC = ')
+    plt.show()
+    plt.clf()
     return {
         'Analiza dyskryminacyjna': test_model(lda, test),
         'Sieć Neuronowa': test_model(nn, test),
@@ -97,11 +96,10 @@ x_train, x_test, x_val, y_train, y_test, y_val = r10_90()
 train, test, val = (make_data(x_train, x_test, x_val, y_train, y_test, y_val))
 
 print('train', 'test')
-plt.title('Radius Neighbors')
-print(analize(train, test, '10 90 AUC = '))
+plt.title('10 90')
+print(analize(train, test, ''))
 
 x_train, x_test, x_val, y_train, y_test, y_val = r70_30()
 train, test, val = (make_data(x_train, x_test, x_val, y_train, y_test, y_val))
-
-print(analize(train, test, '70 30 AUC = '))
-plt.show()
+plt.title('70 30')
+print(analize(train, test, ''))

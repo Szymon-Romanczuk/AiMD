@@ -52,7 +52,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
     jakub_knn = KNN(jakub_train, y_train, jakub_test)
     jakub_svc = SVC(jakub_train, y_train, jakub_test)
 
-    bartek_dt = decision_tree(bartek_train, y_train, bartek_test)
+    #bartek_dt = decision_tree(bartek_train, y_train, bartek_test)
     bartek_knn = KNN(bartek_train, y_train, bartek_test)
     bartek_svc = SVC(bartek_train, y_train, bartek_test)
     bartek_ld = linear_discriminant_analysis(bartek_train, y_train, bartek_test)
@@ -65,7 +65,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
     szymon_ld = linear_discriminant_analysis(szymon_train, y_train, szymon_test)
     szymon_nn = natural_network(szymon_train, y_train, szymon_test)
     szymon_gb = gradient_boosting(szymon_train, y_train, szymon_test)
-    szymon_rn = radius_neighbors(szymon_train, y_train, szymon_test)
+    #szymon_rn = radius_neighbors(szymon_train, y_train, szymon_test)
 
     models = [
         wojtek_dt,
@@ -76,7 +76,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
         jakub_gnb,
         jakub_knn,
         jakub_svc,
-        bartek_dt,
+        #bartek_dt,
         bartek_knn,
         bartek_svc,
         bartek_ld,
@@ -87,7 +87,7 @@ def make_hybrid_model(x_train, x_test, y_train, y_test):
         szymon_ld,
         szymon_nn,
         szymon_gb,
-        szymon_rn,
+        #szymon_rn,
     ]
     return models
 
@@ -98,9 +98,10 @@ def hybrid(x_train, x_test, y_train, y_test):
 
     methods_v2 = make_hybrid_model(x_train, x_test, y_train, y_test)
     hybrid_test = make_hybrid_x(methods_v2)
-    hybrid_m = hybrid_model(hybrid_train, y_train, hybrid_test)
-    Wykres(hybrid_m, y_test, 'Model hybrydowy AUC = ')
-    return score(hybrid_m, y_test)
+    hybrid_m = hybrid_model(hybrid_train, y_train)
+    hybrid_y = hybrid_m.predict(hybrid_test)
+    Wykres(hybrid_m, hybrid_test, y_test, 'Model hybrydowy AUC = ')
+    return score(hybrid_y, y_test)
 
 
 #print(hybrid(x_train, x_train, y_train, y_train))
@@ -116,14 +117,17 @@ def hybrid(x_train, x_test, y_train, y_test):
 #print(hybrid(x_train, x_val, y_train, y_val))
 
 
-x_train, x_test, x_val, y_train, y_test, y_val = r10_90()
+x_train, x_test, x_val, y_train, y_test, y_val = r70_30()
 #plt.title("Testowa 10 90")
 #print(hybrid(x_train, x_train, y_train, y_train))
 
 #print(hybrid(x_train, x_test, y_train, y_test))
 
-plt.title("Waliadcyjna 10 90")
-print(hybrid(x_train, x_val, y_train, y_val))
+plt.title("Testowa 70 30")
+print(hybrid(x_train, x_test, y_train, y_test))
+ji = jednoimmienna(x_train, y_train)
+Wykres(ji, x_test, y_test, 'Jednoimienna AUC = ')
+print(ji.score(x_test, y_test))
 
 plt.show()
 
